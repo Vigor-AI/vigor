@@ -1,11 +1,784 @@
-CTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-        <title>Document</title>
-        </head>
-        <body>
-         Hello   LL
-            </body>
-            </html>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="index.css">
+	<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/jquery/jquery.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+    
 
+
+</head>
+<body>
+	
+	<div class="main-back">
+		
+		<div class='top-img'>
+	          <h1 class='title'>Vigor 智慧公交管理系统</h1>
+	    </div>
+
+		<div id="main" class='main'></div>
+		<div class='center-map' id="map">
+	    </div>
+		<div class='left-top'/>
+		<div class='left-bottom'/>
+		<div class='bottom1'/>
+		<div class='bottom2'/>
+		<div class='right-top' id='right-top'>
+            <img id='image' class='image'>
+        <div>
+		<div class='right-bottom'/>
+	    </div>
+	</div>
+
+
+
+</body>
+
+    
+
+
+
+<script>
+
+var imgUrl = 'http://uartist-test.oss-cn-hangzhou.aliyuncs.com/updateResource/inside/';
+
+var imgList = ['16-2', '6', '16-3', '9-1', '16', '21', '18', '23', '9-3']
+
+var imgIndex = 0;
+
+var image = document.getElementById('image');
+
+var uploadedDataURL = "http://uartist-test.oss-cn-hangzhou.aliyuncs.com/updateResource/data-1497613978134-ByGiUH-m-.json";
+
+var demoURL = "http://uartist-test.oss-cn-hangzhou.aliyuncs.com/updateResource/demo.json";
+
+var planePath = 'path://M268.601,18.375c0,0,14.496,0,18.005,0 		\
+c31.325,0,59.155,0,59.155,0c6.701,0,12.14,5.238,12.14,11.695v17.872c-24.507,0-44.374,19.859-44.374,44.351 		\
+c0,24.492,19.86,44.351,44.374,44.351V335.99c-24.507,0.006-44.374,19.857-44.374,44.357c0,24.484,19.86,44.344,44.374,44.352 		\
+v25.26c0,6.457-5.431,11.695-12.14,11.695H200.158c-12.013,0-19.527-7.781-19.527-19.084c0,0,0-351.215,0-365.378 		\
+s18.736-42.622,44.1-53.734C238.303,17.658,268.601,18.375,268.601,18.375z M202.818,387.729v39.918 		\
+c0,6.531,5.29,11.828,11.821,11.828h35.426c6.531,0,11.814-5.297,11.814-11.828v-39.918H202.818z M202.818,321.199v51.746h59.053 		\
+v-51.746H202.818z M202.818,254.904v51.518h59.053v-51.518H202.818z M202.818,188.413v51.517h59.053v-51.517H202.818z 		 \
+M202.818,121.882v51.746h59.053v-51.746H202.818z M289.658,121.904c-3.037,0-5.497,3.311-5.497,7.396 		\
+c0,4.086,2.46,7.389,5.497,7.389h10.978c3.037,0,5.497-3.303,5.497-7.389c0-4.085-2.46-7.396-5.497-7.396H289.658z M237.38,43.472 		c-20.229,4.766-34.562,30.897-34.562,38.145c0,17.754,0,25.475,0,25.475h59.053l0.03-66.094 		C261.901,40.998,253.641,39.653,237.38,43.472z M328.326,380.348c0-16.328,13.247-29.568,29.59-29.568 		\
+c16.335,0,29.582,13.24,29.582,29.568c0,16.334-13.247,29.566-29.582,29.566C341.573,409.914,328.326,396.682,328.326,380.348z 		 M328.326,92.286c0-16.328,13.247-29.567,29.59-29.567c16.335,0,29.582,13.239,29.582,29.567c0,16.335-13.247,29.574-29.582,29.574 		C341.573,121.86,328.326,108.621,328.326,92.286z  '
+
+var t_pos = {
+    left: 0,
+    top: 0
+}
+
+var centerlist = [[106.52049,29.606528],[106.562387,29.576064], [106.486713,29.629386]]
+
+var last_point = [0, 0];
+
+var mapChart = echarts.init(document.getElementById("map"));
+
+var showline = 0;
+
+var idx = 0;
+
+mapOption = {
+    // 加载 bmap 组件
+    bmap: {
+        // 百度地图中心经纬度
+        //center: [106.486713,29.629386],
+        // 百度地图缩放
+        zoom: 14,
+        // 是否开启拖拽缩放，可以只设置 'scale' 或者 'move'
+        roam: true,
+        // 百度地图的自定义样式，见 http://developer.baidu.com/map/jsdevelop-11.htm
+        mapStyle: {
+            'styleJson': [{
+                "featureType": "all",
+                "elementType": "all",
+                "stylers": {
+                    "lightness": 10,
+                    "saturation": -100
+                }
+            }, {
+                "featureType": "subway",
+                "elementType": "labels.icon",
+                "stylers": {
+                    "color": "#022338",
+                    "visibility": "off"
+                }
+            }, {
+                "featureType": "poi",
+                "elementType": "labels",
+                "stylers": {
+                    "color": "#022338",
+                    "visibility": "off"
+                }
+            }, {
+                "featureType": "highway",
+                "elementType": "labels.icon",
+                "stylers": {
+                    "color": "#022338",
+                    "visibility": "off"
+                }
+            }]
+        }
+    },
+    visualMap: {
+        type: 'continuous',
+        right: '0',
+        top: '55%',
+        text: ['High', 'Low'],
+        min: 0,
+        max: 3000,
+        //seriesIndex: [0,2],
+        calculable: false,
+        inRange: {
+            color: ['lightblue', 'yellow', '#FF8000'] //['green', '#eac736','#d94e5d']
+        },
+        textStyle: {
+            color: '#000',
+            formatter: 'aaaa{value}bbbb{value2}' // 范围标签显示内容。
+        }
+
+    },
+    series: [{
+        id: 'scatter',
+        zlevel: -2,
+        type: 'scatter',
+        coordinateSystem: 'bmap',
+        symbolSize: 8,
+        tooltip: {
+            trigger: 'item',
+            formatter: function(params) {
+                return params.name + ' : ' + params.value[2];
+            },
+            position: 'left'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: function(params) {
+                return params.name + '上车人数:' + params.data.value[2] + '人次';
+            }
+        },
+        label: {
+            normal: {
+                show: false
+            },
+            emphasis: {
+                show: false
+            }
+        },
+    }, {
+        type: 'lines',
+
+        effect: {
+            show: true,
+            period: 20,
+            trailLength: 0,
+            symbol: planePath,
+            symbolSize: 15
+
+        },
+        coordinateSystem: 'bmap',
+        polyline: true,
+        zlevel: -2,
+        lineStyle: {
+            normal: {
+                color: 'rgba(18,89,147, 1)',
+
+                opacity: 0.8,
+                width: 5,
+                shadowColor: 'rgba(0, 0, 0, 0.9)',
+                shadowBlur: 10
+            }
+        },
+
+        progressiveThreshold: 500,
+        progressive: 200
+    }]
+}
+
+if (mapOption && typeof mapOption === "object") {
+    mapChart.setOption(mapOption, true);
+}
+
+var mapData = null
+
+function setMap() {
+	mapChart.setOption({
+		bmap:{
+			center: centerlist[idx],
+		},
+        series: [{
+            data: mapData[idx]['stations'],
+            symbolSize: function(val) {
+
+                return Math.max(30 * val[2] / 3000, 10);
+            },
+        }, {
+          data: [{
+            coords: mapData[idx]['path'],
+          }]
+        }]
+    });
+}
+
+$.getJSON(demoURL, function(data){
+  	mapData = data;
+  	idx = 0;
+  	setMap();
+  	setLoad();
+})
+
+
+
+
+var line = ["Line-309", "Line-645", "Line-183", "Line-220", "Line-869", "Line-151", "Line-208", "Line-121", "Line-871", "Line-225"]
+
+var capity = ["3600", "4800", "5900", "7000", "7200", "7300", "7500", "8100", "8500", "9000"]
+
+var hour = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23"]
+
+var c_hour = ["100","200","300","400","500","600","700","800","900","1000","1100","1200","1300","1400","1500","1600","1700","1800","1900","2000","2100","2200",]
+
+var p_hour = ["2100","2200","2300","2400","2500","2600","2700","2800","2900","1000","1100","1200","1300","1400","1500","1600","1700","1800","1900","100","100","200","300","400"]
+
+
+var tname = ["总负载"]
+
+//dynamic demo
+var base = new Date(2018, 2, 3, 14, 20, 00);
+var oneMinu = 60000;
+var date = [];
+
+var data = [Math.random() * 150];
+var now = new Date(base);
+
+function addData(shift) {
+    now = [base.getHours(), base.getMinutes()].join('/');
+    date.push(now);
+    data.push((Math.random() - 0.4) * 10 + data[data.length - 1]);
+
+    if (shift) {
+        date.shift();
+        data.shift();
+    }
+
+    base = new Date(base.getTime() + oneMinu);
+}
+
+for (var i = 1; i < 100; i++) {
+    addData();
+}
+
+//dynamic demo
+
+var dom = document.getElementById("main");
+var myChart = echarts.init(dom);
+var app = {};
+option = {
+	
+	title:[{
+		text:'总体负载',
+		textStyle:{
+			fontFamily:'YouYuan',
+			fontSize:'20',
+			color:'#FFF',
+		},
+		left:'1%',
+	},{
+		text:'单线路负载及预测',
+		textStyle:{
+			fontFamily:'YouYuan',
+			fontSize:'20',
+			color:'#FFF',
+		},
+		left:'1%',
+		top:'50%',
+	},{
+		text:'实时负载动态',
+		textStyle:{
+			fontFamily:'YouYuan',
+			fontSize:'20',
+			color:'#FFF',
+		},
+		left:'25%',
+		top:'58%',
+	},{
+		text:'实时路况状况',
+		textStyle:{
+			fontFamily:'YouYuan',
+			fontSize:'20',
+			color:'#FFF',
+		},
+		left:'51%',
+		top:'58%',
+	},{
+        text:'车内负载',
+        textStyle:{
+            fontFamily:'YouYuan',
+            fontSize:'20',
+            color:'#FFF',
+        },
+        right:'18%',
+    },{
+        text:'发车时间调度',
+        textStyle:{
+            fontFamily:'YouYuan',
+            fontSize:'20',
+            color:'#FFF',
+        },
+        right:'16%',
+        top: '50%',
+    },{
+        text:'基础间隔： 16分钟',
+        textStyle:{
+            fontFamily:'YouYuan',
+            fontSize:'18',
+            color:'#FFF',
+        },
+        right:'13%',
+        top: '58%',
+    }],
+    legend: [{
+        data:['预测', '实际'],
+        textStyle: {
+	        color: '#FFF',
+	        fontSize: '10',
+	    },
+		left:'15%',
+		top:'63%',
+		zlevel: 2,
+    }],
+	tooltip: {
+		show: true,
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross'
+        }
+    },
+	color: ['#61A8FF'], //进度条颜色
+	xAxis:[{
+		show: false,
+		gridIndex: 0,
+	},{
+		min: 4,
+		max: 23,
+		gridIndex: 1,
+		axisLabel: {
+			color: '#FFF'
+		},
+		axisPointer: {
+            
+        },
+	},{
+		show: false,
+		gridIndex: 2,
+	},{
+        type: 'category',
+        boundaryGap: false,
+        gridIndex: 3,
+        data: date
+    },{
+    	type: 'category',
+        gridIndex: 4,
+        show: true,
+        data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    }, {
+        gridIndex: 5,
+        show: true,
+        min: 0,
+        max: 25,
+        axisLabel: {
+            color: '#FFF'
+        },
+    },{
+        show: false,
+        gridIndex: 6,
+    }],
+	yAxis:[{
+		type:'category',
+		axisLabel: {
+			color: '#FFF'
+		},
+        axisTick: {
+            show: false, //隐藏Y轴刻度
+        },
+        axisLine: {
+            show: false, //隐藏Y轴线段
+        },
+		data: line,
+		gridIndex: 0,
+	},{
+		gridIndex: 1,
+		axisLabel: {
+			color: '#FFF'
+		},
+		axisTick: {
+            show: true, //隐藏Y轴刻度
+        },
+        axisLine: {
+            show: true, //隐藏Y轴线段
+        },
+	},{
+		type:'category',
+		axisLabel: {
+			color: '#FFF'
+		},
+        axisTick: {
+            show: false, //隐藏Y轴刻度
+        },
+        axisLine: {
+            show: false, //隐藏Y轴线段
+        },
+		data: tname,
+		gridIndex: 2,
+	},{
+        boundaryGap: [0, '50%'],
+        type: 'value',
+        gridIndex: 3,
+    },{
+    	type: 'value',
+    	show: true,
+    	gridIndex: 4,
+    },{
+        type:'category',
+        show: false,
+        gridIndex: 5,
+        data: ['车内负载'],
+        axisLabel: {
+            color: '#FFF'
+        },
+    },{
+        show: false,
+        gridIndex: 6,
+    }],
+	grid:[{
+		// left top
+		left:'8%',
+		width: '16%', 
+		height: '40%',
+	},{
+		// left bottom - 24 hour bar
+		left:'7%',
+		width: '14%', 
+		height: '26%',
+		top:'66%',
+		tooltip:{
+        	show: true,
+        },
+	},{
+		// left bottom - day bar
+		left:'7%',
+		width: '14%', 
+		height: '4%',
+		top:'58%',
+	},{
+		// bottom 1 - real time
+		left:'27.5%',
+		width: '20%', 
+		height: '26%',
+		top:'66%',
+	},{
+		// bottom 2 - lukuang
+		left:'53%',
+		width: '20%', 
+		height: '26%',
+		top:'66%',
+	},{
+        // right top - inside bus load
+        right:'5%',
+        width:'16%',
+        height: '4%',
+        top:'7%',
+    },{
+        // right bottom 
+        right:'5%',
+        width:'16%',
+        height: '45%',
+        top:'55%',
+    }],
+	series:[{
+		// series 0: all lines
+		type: 'bar',
+		barWidth: '30%', //统计条宽度
+		data: capity,
+		xAxisIndex: 0,
+        yAxisIndex: 0,
+	},{
+		// series 1: 24 hour real load
+		name:'实际',
+		type: 'bar',
+		barWidth: '30%', //统计条宽度
+		data: c_hour,
+		xAxisIndex: 1,
+        yAxisIndex: 1,
+        itemStyle: {
+            normal: {
+                color:  'rgba(0, 136, 212, 1)',
+                shadowColor: 'rgba(0, 0, 0, 0.1)',
+                shadowBlur: 10
+            }
+        },
+
+	},{
+		// series 2: 24 hour predict load
+		name: '预测',
+		type: 'bar',
+		barWidth: '30%', //统计条宽度
+		xAxisIndex: 1,
+        yAxisIndex: 1,
+        itemStyle: {
+            normal: {
+                color:  'rgba(255, 255, 102,1)',
+               
+                shadowColor: 'rgba(0, 0, 0, 0.1)',
+                shadowBlur: 10
+            }
+        },
+	},{
+		// series 3: day predict load
+		name: '预测总负载',
+		type: 'bar',
+		barWidth: '80%', //统计条宽度
+		//data: total,
+		xAxisIndex: 2,
+		barGap: '-100%',
+        yAxisIndex: 2,
+        tooltip: {
+			show: true,
+			trigger: 'axis',
+	        axisPointer: {
+	            type: 'shadow',
+	            label: {
+	                show: true,
+	                backgroundColor: '#333'
+	            }
+        	}
+    	},
+        itemStyle: {
+	                normal: {
+	                    barBorderRadius: 15,
+	                    color: 'rgba(0, 136, 212, 1)'
+	                },
+            	},
+        z: 10,	
+	},{
+		// series 4: day real load
+		name: '实时总负载',
+		type: 'bar',
+		barWidth: '80%', //统计条宽度
+		data: ["20000"],
+		xAxisIndex: 2,
+		barGap: '-100%',
+        yAxisIndex: 2,
+        itemStyle: {
+	                normal: {
+	                    barBorderRadius: 15,
+	                    color: 'rgba(255, 255, 102,1)'
+	                },
+            	},
+        z: 2,	
+	},{
+		// series 5: real time load
+        name:'分时负载',
+        type:'line',
+        smooth:true,
+        symbol: 'none',
+        stack: 'a',
+        areaStyle: {
+            normal: {}
+        },
+        xAxisIndex: 3,
+    	yAxisIndex: 3,
+        data: data,
+        areaStyle: {
+            normal: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                    offset: 0,
+                    color: 'rgba(97, 168, 255,0.6)'
+                }, {
+                    offset: 1,
+                    color: 'rgba(97, 168, 255,0.2)'
+                }], false)
+            }
+        },
+    },{
+    	// series 6: lukuang of littl time
+    	name:'路况',
+    	type: 'line',
+    	somth: true,
+    	xAxisIndex: 4,
+    	yAxisIndex: 4,
+
+    	lineStyle: {
+            normal: {
+                width: 3,
+                shadowColor: 'rgba(0,0,0,0.4)',
+                shadowBlur: 10,
+                shadowOffsetY: 10
+            }
+        },
+        itemStyle: {
+            normal: {
+                color: '#f7b851'
+            }
+        },
+    }, {
+        //series 7: bus inside load of each img
+        name:'inside',
+        type: 'bar',
+        yAxisIndex: 5,
+        xAxisIndex: 5,
+        barWidth: '80%', //统计条宽度
+        barGap: '-100%',
+        tooltip: {
+            show: true,
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow',
+                label: {
+                    show: true,
+                    backgroundColor: '#333'
+                }
+            }
+        },
+        itemStyle: {
+                    normal: {
+                        barBorderRadius: 15,
+                        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+                            offset: 0,
+                            color: '#ffb069'
+                        }, {
+                            offset: 1,
+                            color: '#ec2e85'
+                        }], false)
+                    },
+                },
+        z: 2,
+    }, {
+        //series 8: bus inside load border
+        type: 'bar',
+        yAxisIndex: 5,
+        xAxisIndex: 5,
+        barGap: '-100%',
+        barWidth: '80%', //统计条宽度
+        itemStyle: {
+                    normal: {
+                        barBorderRadius: 15,
+                        color: 'rgba(255, 255, 255,1)'
+                    },
+                },
+        z: 1,
+        data: [25],
+        borderColor: '#F00',
+        tooltip: {
+            show: false,
+            trigger: 'none',
+            
+        },
+    }, {
+        //series 9: bus send time prediction
+        type: 'gauge',
+        yAxisIndex: 6,
+        xAxisIndex: 6,
+        center: ['87%', '80%'], // 默认全局居中
+        radius: '30%', //仪表盘半径
+        min: 0,
+        max: 30,
+        textStyle: {
+                color: '#fff'
+            },
+        data: [{value: 20, name: '调度调整时间'}]
+    }]
+
+};
+
+myChart.setOption(option);
+
+myChart.on('click', function(params) {
+	if(params.seriesIndex == 0) {
+		if(params.dataIndex < 7)
+			return;
+		idx = 9-params.dataIndex;
+		setMap();
+		setLoad();
+	}
+})
+
+function setLoad() {
+	_total = [mapData[idx]['total']];
+    _inside = [imgList[imgIndex].split('-')[0]];
+	myChart.setOption({
+		xAxis:[{}, {}, {}, {
+			data: date
+		}, {}],
+		series:[{},{
+			data: mapData[idx]['realhour'],
+		},{
+			data: mapData[idx]['hour'],
+		},{
+			data: total[idx],
+	},{},{
+		data: data,
+	},{
+		data: cycle(),
+	},{
+        data: _inside,
+    }]
+	});
+
+    //set inside bus image
+    image.src = imgUrl + imgList[imgIndex] + '.png'
+}
+
+
+setInterval(function () {
+    addData(true);
+    geneData();
+    setLoad();
+}, 2500);
+
+
+var total = [["14844"], ["12002"], ["9409"]]
+
+function random(max) {
+	return Math.round(Math.random() * max);
+}
+
+function geneData() {
+	var n1 =  random(50);
+	var n2 =  random(20);
+	var n3 =  random(18);
+	total[0] = [parseInt(total[0][0]) + n1];
+	total[1] = [parseInt(total[1][0]) + n2];
+	total[2] = [parseInt(total[2][0]) + n3];
+	mapData[0]['realhour'][13] = [mapData[0]['realhour'][13][0], parseInt(mapData[0]['realhour'][13][1]) + n1];
+	mapData[1]['realhour'][13] = [mapData[1]['realhour'][13][0], parseInt(mapData[1]['realhour'][13][1]) + n2];
+	mapData[2]['realhour'][13] = [mapData[2]['realhour'][13][0], parseInt(mapData[2]['realhour'][13][1]) + n3];
+
+	//change start of lukuang index
+	start = (start + 1) % 10;
+
+    // change inside bus load img index
+    imgIndex = (imgIndex + 1) %9;
+}
+
+
+var len = 10;
+var start = 0;
+
+function cycle() {
+	_i =  mapData[idx]['lukuang'].slice(start, start+len);
+	return _i.concat(mapData[idx]['lukuang'].slice(0, len- _i.length));
+}
+
+
+</script>
+
+
+</html>
