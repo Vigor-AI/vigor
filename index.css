@@ -1,0 +1,174 @@
+.main-back {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background: url("http://uartist-test.oss-cn-hangzhou.aliyuncs.com/updateResource/heibai.jpg");
+}
+
+.main-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background: rgba(255, 255, 255, 0.05)
+}
+
+.left {
+	position: fixed;
+	top: 13%;
+	left: 3%;
+	height: 89%;
+	width: 20%;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.left-top {
+	position: fixed;
+	top: 13%;
+	left: 3%;
+	height: 39%;
+	width: 20%;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.left-bottom {
+	position: fixed;
+	top: 59%;
+	left: 3%;
+	height: 38%;
+	width: 20%;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.left-title {
+	position: fixed;
+	top: 8%;
+	left: 3%;
+	height: 5%;
+	width: 20%;
+	color: #FFF;
+	font-family: YouYuan, Arial, sans-serif;
+	font-size: 20px;
+}
+
+.leftb {
+	position: fixed;
+	top: 0%;
+	left: 0%;
+	height: 100%;
+	width: 26%;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.right {
+	position: fixed;
+	top: 8%;
+	right: 3%;
+	height: 89%;
+	width: 20%;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.rightb {
+	position: fixed;
+	top: 0%;
+	right: 0%;
+	height: 100%;
+	width: 26%;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.center-map {
+	position: fixed;
+	top:10%;
+	left: 26%;
+	height: 48%;
+	width: 48%;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.05);
+	z-index: 777;
+}
+
+.middle-down {
+	position: fixed;
+	top:79%;
+	left: 26%;
+	height: 18%;
+	width: 48%;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.top-img {
+	position: fixed;
+	height: 8%;
+	width: 100%;
+	background: url("http://uartist-test.oss-cn-hangzhou.aliyuncs.com/updateResource/top2.png");
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+.title {
+	text-align: center;
+	font-family:"Microsoft Yahei", Arial, sans-serif; 
+	margin:10px;
+	color: #FFF;
+}
+
+.chart1 {
+	width:100%;
+}
+
+.main {
+	width: 100%;
+	top:8%;
+	height: 92%;
+	position: fixed;
+	z-index: 666;
+}
+
+.bottom1 {
+	left: 25%;
+	width: 24%;
+	top:66%;
+	height: 31%;
+	position: fixed;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.bottom2 {
+	left: 51%;
+	width: 24%;
+	top:66%;
+	height: 31%;
+	position: fixed;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.right-top {
+	position: fixed;
+	top: 13%;
+	right: 3%;
+	height: 39%;
+	width: 20%;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.right-bottom {
+	position: fixed;
+	top: 59%;
+	right: 3%;
+	height: 38%;
+	width: 20%;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.image {
+	width: 94%;
+	height: 74%;
+	margin-left: 3%;
+	margin-top: 23%;
+}
